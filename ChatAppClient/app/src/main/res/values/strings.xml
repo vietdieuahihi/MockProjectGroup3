@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">ChatAppClient</string>
+    <string name="app_name">MockClient</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_home">Home</string>
+    <string name="current_username">Username</string>
+    <string name="title_conversations">Conversations</string>
+    <string name="example_username">Viet</string>
+    <string name="status_online">Online</string>
+    <string name="hint_type_message">Type message...</string>
+    <string name="example_message">10 diem</string>
+    <string name="example_time">10:10 PM</string>
 </resources>
