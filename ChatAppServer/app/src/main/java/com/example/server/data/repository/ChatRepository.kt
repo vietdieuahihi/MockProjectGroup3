@@ -1,4 +1,4 @@
-package com.example.mockserver.data.repository
+package com.example.server.data.repository
 
 import androidx.lifecycle.LiveData
 import com.example.server.data.local.dao.ChatDao
@@ -16,8 +16,11 @@ class ChatRepository @Inject constructor(private val chatDao: ChatDao) {
         emit(chatDao.insert(chat))
     }.flowOn(Dispatchers.IO)
 
-
-    fun getChatInConversation(conversationId: Long): LiveData<List<Chat>> {
+    fun getChatInConversation(conversationId: Int): LiveData<List<Chat>> {
         return chatDao.getChatInConversation(conversationId)
+    }
+
+    fun getChatByConversationId(conversationId: Int): List<Chat> {
+        return chatDao.getChatByConversationId(conversationId)
     }
 }
