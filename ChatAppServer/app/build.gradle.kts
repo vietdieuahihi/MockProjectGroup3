@@ -71,6 +71,9 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
     kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
+
+    // glide
+    implementation(libs.glide)
 }
 kapt {
     correctErrorTypes = true
