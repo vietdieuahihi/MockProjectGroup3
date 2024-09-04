@@ -38,7 +38,7 @@ class ConversationAdapter(
                     binding.tvUsername.text = "Unknown User" // Fallback in case user is not found
                 }
 
-                Glide.with(binding.imgConversation).load(user?.avatar ?: "").placeholder(R.drawable.ic_avt)
+                Glide.with(binding.imgConversation).load(user?.avatar ?: "").placeholder(R.drawable.baseline_person_24)
                     .into(binding.imgConversation)
             }
 

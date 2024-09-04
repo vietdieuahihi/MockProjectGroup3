@@ -21,6 +21,7 @@ import com.example.client.MainActivity
 import com.example.client.R
 import com.example.client.databinding.FragmentListConversationBinding
 import com.example.client.ui.adapter.ConversationAdapter
+import com.example.client.viewmodel.ChatViewModel
 import com.example.client.viewmodel.ConversationViewModel
 import com.example.client.viewmodel.UserViewModel
 import com.example.server.entity.Conversation
@@ -33,6 +34,7 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
 
     private val userViewModel: UserViewModel by viewModels()
     private val conversationViewModel: ConversationViewModel by viewModels()
+    private val chatViewModel: ChatViewModel by viewModels()
 
     private lateinit var conversationAdapter: ConversationAdapter
     private lateinit var drawerLayout: DrawerLayout
@@ -44,6 +46,7 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
         super.onCreate(savedInstanceState)
         userViewModel.initService((requireActivity() as MainActivity).messageService)
         conversationViewModel.initService((requireActivity() as MainActivity).messageService)
+        chatViewModel.initService((requireActivity() as MainActivity).messageService)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -76,6 +79,7 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
 //            }
         }
     }
+
 
     private fun setupConversationRecyclerView() {
         conversationAdapter = ConversationAdapter(onItemClick = { conversation ->
@@ -177,7 +181,7 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
         users?.let {
             val item = it[p2]
             Log.d(
-                "uqweuiqw",
+                "VietDQ15",
                 "item.userid = ${item.userid}, currentUser?.userid = ${currentUser?.userid}, item.userid == currentUser?.userid = ${item.userid == currentUser?.userid}"
             )
             if (item.userid == currentUser?.userid) return
