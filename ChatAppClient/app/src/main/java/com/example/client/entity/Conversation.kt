@@ -12,7 +12,6 @@ data class Conversation(
     val receiverId: Int,
     val lastMessage: String,
     val timestamp: String,
-
     val timeDeleteSender: Long = -1,
     val timeDeleteReceiver: Long = -1
 ) : Parcelable, Serializable
