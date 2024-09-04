@@ -3,20 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/listConversationFragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/listConversationFragment"
         android:name="com.example.client.ui.ListConversationFragment"
         android:label="fragment_list_conversation"
-        tools:layout="@layout/fragment_list_conversation" >
+        tools:layout="@layout/fragment_list_conversation">
         <action
             android:id="@+id/action_listConversationFragment_to_detailChatFragment"
             app:destination="@id/detailChatFragment" />
+<!--        <action-->
+<!--            android:id="@+id/action_listConversationFragment_to_switchUserFragment"-->
+<!--            app:destination="@id/switchUserFragment" />-->
     </fragment>
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.client.ui.SplashFragment"
+        android:label="fragment_splasg"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splashFragment_to_listConversationFragment"
+            app:destination="@id/listConversationFragment"
+            app:popUpTo="@+id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
     <fragment
         android:id="@+id/detailChatFragment"
         android:name="com.example.client.ui.DetailChatFragment"
         android:label="fragment_detail_chat"
         tools:layout="@layout/fragment_detail_chat" />
+
+<!--    <fragment-->
+<!--        android:id="@+id/switchUserFragment"-->
+<!--        android:name="com.example.client.ui.SwitchUserFragment"-->
+<!--        android:label="fragment_switch_user"-->
+<!--        tools:layout="@layout/fragment_switch_user" />-->
 </navigation>
