@@ -13,9 +13,9 @@
         <action
             android:id="@+id/action_listConversationFragment_to_detailChatFragment"
             app:destination="@id/detailChatFragment" />
-<!--        <action-->
-<!--            android:id="@+id/action_listConversationFragment_to_switchUserFragment"-->
-<!--            app:destination="@id/switchUserFragment" />-->
+        <action
+            android:id="@+id/action_listConversationFragment_to_switchUserFragment"
+            app:destination="@id/switchUserFragment" />
     </fragment>
 
     <fragment
@@ -36,9 +36,9 @@
         android:label="fragment_detail_chat"
         tools:layout="@layout/fragment_detail_chat" />
 
-<!--    <fragment-->
-<!--        android:id="@+id/switchUserFragment"-->
-<!--        android:name="com.example.client.ui.SwitchUserFragment"-->
-<!--        android:label="fragment_switch_user"-->
-<!--        tools:layout="@layout/fragment_switch_user" />-->
+    <fragment
+        android:id="@+id/switchUserFragment"
+        android:name="com.example.client.ui.SwitchUserFragment"
+        android:label="fragment_switch_user"
+        tools:layout="@layout/fragment_switch_user" />
 </navigation>

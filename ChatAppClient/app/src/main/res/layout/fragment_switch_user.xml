@@ -1,0 +1,27 @@
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background_1"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/define_dimen_30"
+        android:paddingVertical="10dp"
+        android:text="@string/title_switch_user"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_20"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/userList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/white_rectangle"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/define_dimen_10"
+        android:paddingVertical="@dimen/define_dimen_30"
+        tools:listitem="@layout/item_user" />
+</androidx.appcompat.widget.LinearLayoutCompat>

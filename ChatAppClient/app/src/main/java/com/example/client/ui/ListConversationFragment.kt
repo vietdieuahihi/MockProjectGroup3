@@ -51,6 +51,7 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListConversationBinding.inflate(inflater, container, false)
+        setupViews()
         setupConversationRecyclerView()
         observeConversations()
 
@@ -80,6 +81,16 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
         }
     }
 
+    private fun setupViews() {
+        // Initialize DrawerLayout and Views
+        drawerLayout = binding.drawerLayout
+        avatarButton = binding.avatar
+
+        binding.layoutSwitchUser.setOnClickListener {
+            drawerLayout.close()
+            findNavController().navigate(R.id.action_listConversationFragment_to_switchUserFragment)
+        }
+    }
 
     private fun setupConversationRecyclerView() {
         conversationAdapter = ConversationAdapter(onItemClick = { conversation ->
