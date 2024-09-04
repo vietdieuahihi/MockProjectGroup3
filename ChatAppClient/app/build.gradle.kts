@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -11,12 +12,19 @@ android {
 
     defaultConfig {
         applicationId = "com.example.client"
-        minSdk = 24
+        minSdk = 27
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+
+    buildFeatures {
+        aidl = true
+        dataBinding = true
+        viewBinding = true
     }
 
     buildTypes {
@@ -35,12 +43,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
-    buildFeatures {
-        aidl = true
-        dataBinding = true
-        viewBinding = true
-    }
 }
 
 dependencies {
@@ -50,11 +52,12 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
 
     //Room database
     val roomVersion = "2.4.0"
@@ -66,7 +69,7 @@ dependencies {
     implementation("androidx.room:room-paging:$roomVersion") // optional - Paging 3 Integration
 
     //Rounded Image View
-    implementation("com.makeramen:roundedimageview:2.3.0")
+    implementation ("com.makeramen:roundedimageview:2.3.0")
 
     //Kotlin Coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
@@ -76,17 +79,11 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.48")
     kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
 
-    val nav_version = "2.7.7"
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
-    // Jetpack Compose integration
-    implementation("androidx.navigation:navigation-compose:$nav_version")
-
-    // Views/Fragments integration
-    implementation("androidx.navigation:navigation-fragment:$nav_version")
-    implementation("androidx.navigation:navigation-ui:$nav_version")
-
-    // Feature module support for Fragments
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
+    // glide
+    implementation(libs.glide)
 }
 
 kapt {

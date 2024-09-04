@@ -1,4 +1,4 @@
-package com.example.mockserver.data.repository
+package com.example.server.data.repository
 
 import androidx.lifecycle.LiveData
 import com.example.server.data.local.dao.ConversationDao
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ConversationRepository @Inject constructor(private val conversationDao: ConversationDao) {
-    fun insertConversation(conversation: Conversation): Flow<Unit> = flow{
+    fun insertConversation(conversation: Conversation): Flow<Unit> = flow {
         emit(conversationDao.insert(conversation))
     }.flowOn(Dispatchers.IO)
 
@@ -21,11 +21,23 @@ class ConversationRepository @Inject constructor(private val conversationDao: Co
         return conversationDao.getAllConversations()
     }
 
-    fun updateConversation(conversationId: Long, lastMessage: String, timestamp: String): Flow<Unit> = flow {
-        emit(conversationDao.updateConversation(conversationId, lastMessage,timestamp))
+    fun updateConversation(conversationId: Int, lastMessage: String, timestamp: String): Flow<Unit> = flow {
+        emit(conversationDao.updateConversation(conversationId, lastMessage, timestamp))
     }.flowOn(Dispatchers.IO)
 
-    fun deleteConversationById(conversationId: Long) : Flow<Unit> = flow {
+    fun updateConversation(conversationId: Int, timeDeleteSender: Long, timeDeleteReceiver: Long): Flow<Unit> = flow {
+        emit(conversationDao.updateConversation(conversationId, timeDeleteSender, timeDeleteReceiver))
+    }.flowOn(Dispatchers.IO)
+
+    fun updateConversation(conversation: Conversation): Flow<Unit> = flow {
+        emit(conversationDao.updateConversation(conversation))
+    }.flowOn(Dispatchers.IO)
+
+    fun deleteConversationById(conversationId: Int): Flow<Unit> = flow {
         emit(conversationDao.deleteConversationById(conversationId))
     }.flowOn(Dispatchers.IO)
+
+    fun getConversationsForUser(userId: Int): List<Conversation> {
+        return conversationDao.getConversationsForUser(userId)
+    }
 }

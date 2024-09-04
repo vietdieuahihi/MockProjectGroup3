@@ -14,9 +14,15 @@ interface ChatDao {
     @Query("SELECT * FROM chats")
     fun getAllChats(): LiveData<List<Chat>>
 
+    @Insert
+    fun insertAll(chats: List<Chat>)
+
     @Query("SELECT * FROM chats")
     fun getRemoteAllChats(): List<Chat>
 
     @Query("SELECT * FROM chats WHERE conversationId = :conversationId")
-    fun getChatInConversation(conversationId: Long): LiveData<List<Chat>>
+    fun getChatInConversation(conversationId: Int): LiveData<List<Chat>>
+
+    @Query("SELECT * FROM chats WHERE conversationId = :conversationId")
+    fun getChatByConversationId(conversationId: Int): List<Chat>
 }

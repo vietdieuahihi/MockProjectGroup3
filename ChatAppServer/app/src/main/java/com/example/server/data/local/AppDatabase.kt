@@ -12,24 +12,29 @@ import com.example.server.entity.Conversation
 import com.example.server.entity.User
 
 
-@Database(
-    entities = [User::class, Conversation::class, Chat::class],
-    version = 1
-)
-abstract class AppDatabase: RoomDatabase() {
-
+@Database(entities = [User::class, Conversation::class, Chat::class], version = 2, exportSchema = false)
+abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun conversationDao(): ConversationDao
     abstract fun chatDao(): ChatDao
 
     companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
         @Synchronized
         fun getDatabase(context: Context): AppDatabase {
-            return Room.databaseBuilder(
-                context.applicationContext, // Use applicationContext
-                AppDatabase::class.java,
-                "chat-app.db"
-            ).build()
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "chat_database"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                INSTANCE = instance
+                instance
+            }
         }
     }
 }

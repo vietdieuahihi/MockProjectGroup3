@@ -17,9 +17,14 @@ import kotlinx.parcelize.Parcelize
     foreignKeys = [
         ForeignKey(entity = User::class, parentColumns = ["userid"], childColumns = ["senderId"]),
         ForeignKey(entity = User::class, parentColumns = ["userid"], childColumns = ["receiverId"]),
-        ForeignKey(entity = Conversation::class, parentColumns = ["conversationId"], childColumns = ["conversationId"])
+        ForeignKey(
+            entity = Conversation::class,
+            parentColumns = ["conversationId"],
+            childColumns = ["conversationId"]
+        )
     ]
 )
+
 @Parcelize
 data class Chat(
     @PrimaryKey(autoGenerate = true) val chatId: Int = 0,
