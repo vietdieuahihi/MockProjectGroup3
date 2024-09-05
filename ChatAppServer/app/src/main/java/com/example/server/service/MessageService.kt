@@ -30,34 +30,36 @@ class MessageService : Service() {
     lateinit var userRepository: UserRepository
 
     override fun onBind(intent: Intent?): IBinder {
-        Log.d("MockServer", "Service bound")
+        Log.d(TAG, "Service bound")
         return mBinder
     }
 
+
+    
     private val mBinder = object : IMessageService.Stub() {
 
         override fun getConversation(): List<Conversation> {
-            Log.d("MockServer", "getConversation() called")
+            Log.d(TAG, "getConversation() called")
             return conversationRepository.getAllConversation().value ?: emptyList()
         }
 
         override fun getUsers(): List<User> {
-            Log.d("MockServer", "getUsers() called")
+            Log.d(TAG, "getUsers() called")
             return userRepository.getRemoteAllUsers()
         }
 
         override fun getChat(conversationId: Int): List<Chat> {
-            Log.d("MockServer", "getChat() called")
+            Log.d(TAG, "getChat() called")
             return chatRepository.getChatByConversationId(conversationId)
         }
 
         override fun getUserById(userId: Int): User? {
-            Log.d("MockServer", "getUserById() called with userId: $userId")
+            Log.d(TAG, "getUserById() called with userId: $userId")
             return userRepository.getUserById(userId)
         }
 
         override fun fetchCurrentUser(): User? {
-            Log.d("MockServer", "getCurrentUser() called")
+            Log.d(TAG, "getCurrentUser() called")
             return userRepository.getCurrentUser()
         }
 
@@ -68,7 +70,7 @@ class MessageService : Service() {
         }
 
         override fun sendMessage(message: Chat?) {
-            Log.d("MockServer", "sendMessage() called with message: ${message?.message}")
+            Log.d(TAG, "sendMessage() called with message: ${message?.message}")
             message?.let {
                 CoroutineScope(Dispatchers.IO).launch {
                     chatRepository.insertChat(it).collect {}
@@ -123,14 +125,18 @@ class MessageService : Service() {
         }
 
         override fun getConversationsForUser(userId: Int): MutableList<Conversation> {
-            Log.d("MockServer", "getConversationsForUser() called with userId: $userId")
+            Log.d(TAG, "getConversationsForUser() called with userId: $userId")
             val conversations = conversationRepository.getConversationsForUser(userId)
-            Log.d("MockServer", "Fetched conversations: ${conversations.size} for userId: $userId")
+            Log.d(TAG, "Fetched conversations: ${conversations.size} for userId: $userId")
             return conversations.toMutableList()
         }
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         return super.onUnbind(intent)
+    }
+
+    companion object {
+        private const val TAG = "MockServer"
     }
 }

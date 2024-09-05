@@ -36,18 +36,21 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             conversationRepository.getAllConversation().observe(this@MainActivity) {
                 if (it == null) {
-                    Log.d("VietDQ15", "getAllConversation is null")
+                    Log.d(TAG, "getAllConversation is null")
                 } else {
-                    Log.d("VietDQ15", "getAllConversation is ${it.size}")
+                    Log.d(TAG, "getAllConversation is ${it.size}")
                 }
             }
         }
 
         CoroutineScope(Dispatchers.IO).launch {
             Log.d(
-                "VietDQ15",
+                TAG,
                 "conversationRepository.getConversationsForUser() ${conversationRepository.getConversationsForUser(1)}"
             )
         }
+    }
+    companion object {
+        private const val TAG = "MAIN_ACTIVITY"
     }
 }
