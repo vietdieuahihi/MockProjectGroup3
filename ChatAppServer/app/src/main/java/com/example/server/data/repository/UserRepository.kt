@@ -12,25 +12,26 @@ import javax.inject.Singleton
 
 @Singleton
 class UserRepository @Inject constructor(private val userDao: UserDao) {
-    fun insertUser(user: User): Flow<Unit> = flow {
+
+    suspend fun insertUser(user: User): Flow<Unit> = flow {
         emit(userDao.insertUser(user))
     }.flowOn(Dispatchers.IO)
 
-    fun deleteUserById(userId: Int): Flow<Unit> = flow {
+    suspend fun deleteUserById(userId: Int): Flow<Unit> = flow {
         emit(userDao.deleteUserById(userId))
     }.flowOn(Dispatchers.IO)
 
-    fun getUserById(userId: Int): User? = userDao.getUserById(userId)
+    suspend fun getUserById(userId: Int): User? = userDao.getUserById(userId)
 
-    fun getCurrentUser(): User? = userDao.getCurrentUser()
+    suspend fun getCurrentUser(): User? = userDao.getCurrentUser()
 
-    fun getRemoteAllUsers(): List<User> = userDao.getRemoteAllUsers()
+    suspend fun getRemoteAllUsers(): List<User> = userDao.getRemoteAllUsers()
 
-    fun switchUser(userId: Int) {
+    suspend fun switchUser(userId: Int) {
         val users = arrayListOf<User>()
         getRemoteAllUsers().forEach {
-            val flag = if (it.userid == userId) UserState.SELECTED.flag else UserState.NORMAL.flag
-            users.add(User(it.userid, it.username, it.avatar, flag))
+            val flag = if (it.userId == userId) UserState.SELECTED.flag else UserState.NORMAL.flag
+            users.add(User(it.userId, it.username, it.avatar, flag))
         }
         userDao.updates(users)
     }

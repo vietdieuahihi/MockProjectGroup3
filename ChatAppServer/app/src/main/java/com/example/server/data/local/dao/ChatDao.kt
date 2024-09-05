@@ -8,21 +8,28 @@ import com.example.server.entity.Chat
 
 @Dao
 interface ChatDao {
+
     @Insert
-    fun insert(chat: Chat)
+    suspend fun insert(chat: Chat)
 
     @Query("SELECT * FROM chats")
     fun getAllChats(): LiveData<List<Chat>>
 
     @Insert
-    fun insertAll(chats: List<Chat>)
+    suspend fun insertAll(chats: List<Chat>)
 
     @Query("SELECT * FROM chats")
-    fun getRemoteAllChats(): List<Chat>
+    suspend fun getRemoteAllChats(): List<Chat>
+
+    @Query("SELECT * FROM chats WHERE chatId = :chatId")
+    suspend fun getChatById(chatId: Long): Chat?
 
     @Query("SELECT * FROM chats WHERE conversationId = :conversationId")
     fun getChatInConversation(conversationId: Int): LiveData<List<Chat>>
 
     @Query("SELECT * FROM chats WHERE conversationId = :conversationId")
-    fun getChatByConversationId(conversationId: Int): List<Chat>
+    suspend fun getChatByConversationId(conversationId: Int): List<Chat>
+
+    @Query("UPDATE chats SET flag = 0 WHERE chatId = :chatId")
+    suspend fun hideChat(chatId: Long)
 }

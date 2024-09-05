@@ -9,6 +9,7 @@ interface IMessageService {
     List<User> getUsers();
     List<Chat> getChat(int conversationId);
 
+    Chat getChatById(long chatId);
     User getUserById(int userId);
     User fetchCurrentUser();
 
@@ -18,9 +19,11 @@ interface IMessageService {
     void removeConversationById(in int conversationId);
     void removeUserById(in int userId);
 
-    void updateConversation(in int conversationId, in String lastMessage, in String timestamp);
+    void updateConversation(in int conversationId, in String lastMessage, in long lastMessageId, in String timestamp);
     void updateConversationV2(in int conversationId, in long timeDeleteSender, in long timeDeleteReceiver);
 
+    void hideChat(long chatId);
     void hideConversation(in Conversation conversation);
+
     List<Conversation> getConversationsForUser(in int userId);
 }

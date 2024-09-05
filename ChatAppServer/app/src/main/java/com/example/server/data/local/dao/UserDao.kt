@@ -10,27 +10,28 @@ import com.example.server.entity.User
 
 @Dao
 interface UserDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertUser(user: User)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(users: List<User>)
+    suspend fun insertUser(user: User)
 
-    @Query("DELETE FROM users WHERE userid = :userId")
-    fun deleteUserById(userId: Int)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(users: List<User>)
+
+    @Query("DELETE FROM users WHERE userId = :userId")
+    suspend fun deleteUserById(userId: Int)
 
     @Query("SELECT * FROM users")
     fun getAllUsers(): LiveData<List<User>>
 
     @Query("SELECT * FROM users")
-    fun getRemoteAllUsers(): List<User>
+    suspend fun getRemoteAllUsers(): List<User>
 
-    @Query("SELECT * FROM users WHERE userid = :userId")
-    fun getUserById(userId: Int): User?
+    @Query("SELECT * FROM users WHERE userId = :userId")
+    suspend fun getUserById(userId: Int): User?
 
     @Query("SELECT * FROM users WHERE flag = 1")
-    fun getCurrentUser(): User?
+    suspend fun getCurrentUser(): User?
 
     @Update
-    fun updates(users: List<User>)
+    suspend fun updates(users: List<User>)
 }

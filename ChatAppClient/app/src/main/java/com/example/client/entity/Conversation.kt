@@ -11,6 +11,7 @@ data class Conversation(
     val senderId: Int,
     val receiverId: Int,
     val lastMessage: String,
+    val lastMessageId: Long? = null,
     val timestamp: String,
     val timeDeleteSender: Long = -1,
     val timeDeleteReceiver: Long = -1

@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class ConversationRepository @Inject constructor(private val conversationDao: ConversationDao) {
-    fun insertConversation(conversation: Conversation): Flow<Unit> = flow {
+
+    suspend fun insertConversation(conversation: Conversation): Flow<Unit> = flow {
         emit(conversationDao.insert(conversation))
     }.flowOn(Dispatchers.IO)
 
@@ -21,23 +21,28 @@ class ConversationRepository @Inject constructor(private val conversationDao: Co
         return conversationDao.getAllConversations()
     }
 
-    fun updateConversation(conversationId: Int, lastMessage: String, timestamp: String): Flow<Unit> = flow {
-        emit(conversationDao.updateConversation(conversationId, lastMessage, timestamp))
+    suspend fun updateConversation(
+        conversationId: Int,
+        lastMessage: String,
+        lastMessageId: Long,
+        timestamp: String
+    ): Flow<Unit> = flow {
+        emit(conversationDao.updateConversation(conversationId, lastMessage, lastMessageId, timestamp))
     }.flowOn(Dispatchers.IO)
 
-    fun updateConversation(conversationId: Int, timeDeleteSender: Long, timeDeleteReceiver: Long): Flow<Unit> = flow {
+    suspend fun updateConversation(conversationId: Int, timeDeleteSender: Long, timeDeleteReceiver: Long): Flow<Unit> = flow {
         emit(conversationDao.updateConversation(conversationId, timeDeleteSender, timeDeleteReceiver))
     }.flowOn(Dispatchers.IO)
 
-    fun updateConversation(conversation: Conversation): Flow<Unit> = flow {
+    suspend fun updateConversation(conversation: Conversation): Flow<Unit> = flow {
         emit(conversationDao.updateConversation(conversation))
     }.flowOn(Dispatchers.IO)
 
-    fun deleteConversationById(conversationId: Int): Flow<Unit> = flow {
+    suspend fun deleteConversationById(conversationId: Int): Flow<Unit> = flow {
         emit(conversationDao.deleteConversationById(conversationId))
     }.flowOn(Dispatchers.IO)
 
-    fun getConversationsForUser(userId: Int): List<Conversation> {
+    suspend fun getConversationsForUser(userId: Int): List<Conversation> {
         return conversationDao.getConversationsForUser(userId)
     }
 }

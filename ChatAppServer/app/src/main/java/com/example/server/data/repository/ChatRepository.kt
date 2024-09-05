@@ -12,7 +12,8 @@ import javax.inject.Singleton
 
 @Singleton
 class ChatRepository @Inject constructor(private val chatDao: ChatDao) {
-    fun insertChat(chat: Chat): Flow<Unit> = flow {
+
+    suspend fun insertChat(chat: Chat): Flow<Unit> = flow {
         emit(chatDao.insert(chat))
     }.flowOn(Dispatchers.IO)
 
@@ -20,7 +21,15 @@ class ChatRepository @Inject constructor(private val chatDao: ChatDao) {
         return chatDao.getChatInConversation(conversationId)
     }
 
-    fun getChatByConversationId(conversationId: Int): List<Chat> {
+    suspend fun getChatByConversationId(conversationId: Int): List<Chat> {
         return chatDao.getChatByConversationId(conversationId)
     }
+
+    suspend fun getChatById(chatId: Long): Chat? {
+        return chatDao.getChatById(chatId)
+    }
+
+    suspend fun hideChat(chatId: Long): Flow<Unit> = flow {
+        emit(chatDao.hideChat(chatId))
+    }.flowOn(Dispatchers.IO)
 }
