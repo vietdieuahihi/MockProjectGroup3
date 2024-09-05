@@ -96,6 +96,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:background="@color/light_gray"
             android:padding="@dimen/define_dimen_10">
 
             <androidx.cardview.widget.CardView

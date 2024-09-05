@@ -1,5 +1,6 @@
 package com.example.client.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
@@ -30,7 +31,7 @@ class ConversationAdapter(
 
             val userId =
                 if (conversation.senderId == selfId) conversation.receiverId else conversation.senderId
-            println("VietDQ15: selfId = $selfId, userId = $userId")
+            Log.d("VietDQ15", "selfId = $selfId, userId = $userId")
 
             userViewModel.fetchUserById(userId).let { user ->
                 if (user != null) {

@@ -108,16 +108,22 @@
         android:layout_height="@dimen/define_dimen_50"
         android:layout_margin="@dimen/define_dimen_20"
         android:background="@drawable/background_chat_input"
+        android:gravity="center|start"
         android:hint="@string/hint_type_message"
         android:imeOptions="actionDone"
         android:importantForAutofill="no"
-        android:inputType="text"
+        android:inputType="textMultiLine"
+        android:textColorHint="@color/gray"
+        android:maxLines="5"
+        android:minLines="1"
         android:paddingHorizontal="@dimen/define_dimen_16"
+        android:scrollHorizontally="false"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/icSend"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rcvChat" />
+
 
     <ImageView
         android:id="@+id/icSend"

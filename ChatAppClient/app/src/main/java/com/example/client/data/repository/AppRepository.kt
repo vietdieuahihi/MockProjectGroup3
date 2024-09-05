@@ -28,10 +28,6 @@ class AppRepository @Inject constructor(private val context: Context) {
     val userById: LiveData<User> get() = _userById
     val conversations: LiveData<List<Conversation>> get() = _conversations
 
-    companion object {
-        private const val TAG = "UserRepository"
-    }
-
     fun initService(messageService: IMessageService) {
         if (this.messageService == null) {
             this.messageService = messageService
@@ -132,5 +128,8 @@ class AppRepository @Inject constructor(private val context: Context) {
     fun sendMessage(chat: Chat) {
         messageService?.sendMessage(chat)
     }
-}
 
+    companion object {
+        private const val TAG = "UserRepository"
+    }
+}
