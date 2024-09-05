@@ -5,11 +5,15 @@
     <string name="title_home">Home</string>
     <string name="current_username">Username</string>
     <string name="title_conversations">Conversations</string>
-    <string name="title_switch_user">Account conversion</string>
+    <string name="title_switch_user">Switch account</string>
     <string name="example_username">Viet</string>
     <string name="status_online">Online</string>
     <string name="hint_type_message">Type message...</string>
     <string name="example_message">10 diem</string>
     <string name="example_time">10:10 PM</string>
     <string name="loading">Connecting...</string>
+    <string name="confirm">Confirm</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="unknown_user">Unknown user</string>
 </resources>

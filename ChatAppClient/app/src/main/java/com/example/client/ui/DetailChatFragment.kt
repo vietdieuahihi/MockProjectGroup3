@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.client.MainActivity
 import com.example.client.R
+import com.example.client.constants.KEY_CONVERSATION
+import com.example.client.constants.KEY_USER
 import com.example.client.databinding.FragmentDetailChatBinding
 import com.example.client.ui.adapter.ChatAdapter
 import com.example.client.viewmodel.ChatViewModel
@@ -23,7 +25,9 @@ import com.example.client.viewmodel.UserViewModel
 import com.example.server.entity.Chat
 import com.example.server.entity.Conversation
 import com.example.server.entity.User
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DetailChatFragment : Fragment() {
 
     private var _binding: FragmentDetailChatBinding? = null
@@ -52,7 +56,11 @@ class DetailChatFragment : Fragment() {
 
     private lateinit var adapter: ChatAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentDetailChatBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -60,11 +68,11 @@ class DetailChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let {
-            (it.getSerializable("conversation") as? Conversation)?.let { data ->
+            (it.getSerializable(KEY_CONVERSATION) as? Conversation)?.let { data ->
                 conversation = data
             }
             chatViewModel.getChatByConversationId(conversation.conversationId)
-            (it.getSerializable("user") as? User)?.let { data ->
+            (it.getSerializable(KEY_USER) as? User)?.let { data ->
                 selfUser = data
             }
 
@@ -76,10 +84,11 @@ class DetailChatFragment : Fragment() {
                 if (user != null) {
                     binding.tvUsername.text = user.username // Use the username from User
                 } else {
-                    binding.tvUsername.text = "Unknown User" // Fallback in case user is not found
+                    binding.tvUsername.setText(getString(R.string.unknown_user))
                 }
 
-                Glide.with(binding.imgConversation).load(user?.avatar ?: "").placeholder(R.drawable.baseline_person_24)
+                Glide.with(binding.imgConversation).load(user?.avatar ?: "")
+                    .placeholder(R.drawable.baseline_person_24)
                     .into(binding.imgConversation)
             }
         }
@@ -100,11 +109,16 @@ class DetailChatFragment : Fragment() {
             it.forEach {
                 Log.d("VietDQ15", "$it")
             }
-            val result = it.filter { chats -> chats.timestamp.isNotEmpty() && chats.timestamp.toLong() > timeDelete }
+            val result =
+                it.filter { chats -> chats.timestamp.isNotEmpty() && chats.timestamp.toLong() > timeDelete }
             original.addAll(result)
             adapter.submitList(result)
 
-            Handler(Looper.getMainLooper()).postDelayed({ binding.rcvChat.smoothScrollToPosition(original.size) }, 200L)
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.rcvChat.smoothScrollToPosition(
+                    original.size
+                )
+            }, 200L)
         }
         binding.icSend.setOnClickListener {
             val message = binding.etInputMessage.text.toString().trim()
@@ -123,18 +137,26 @@ class DetailChatFragment : Fragment() {
             original.add(chat)
             binding.etInputMessage.setText("")
             chatViewModel.sendMessage(chat)
-            conversationViewModel.updateConversation(conversation.conversationId, message, chat.timestamp)
+            conversationViewModel.updateConversation(
+                conversation.conversationId,
+                message,
+                chat.timestamp
+            )
             adapter.submitList(original)
-            Handler(Looper.getMainLooper()).postDelayed({ binding.rcvChat.smoothScrollToPosition(original.size) }, 300L)
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.rcvChat.smoothScrollToPosition(
+                    original.size
+                )
+            }, 300L)
         }
         binding.icBack.setOnClickListener {
             findNavController().popBackStack()
         }
         binding.icDelete.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setTitle("Confirm")
-                .setMessage("Are you sure you want to delete ${binding.tvUsername.text} as friends?")
-                .setPositiveButton("OK") { _, _ ->
+                .setTitle(getString(R.string.confirm))
+                .setMessage("Are you sure you want to delete ${binding.tvUsername.text} box chat?")
+                .setPositiveButton(getString(R.string.ok)) { _, _ ->
                     var timeDeleteSender: Long = conversation.timeDeleteSender
                     var timeDeleteReceiver: Long = conversation.timeDeleteReceiver
                     if (selfUser.userid == conversation.senderId) {
@@ -149,7 +171,7 @@ class DetailChatFragment : Fragment() {
                         timeDeleteReceiver
                     )
                     findNavController().popBackStack()
-                }.setNegativeButton("Cancel", null)
+                }.setNegativeButton(getString(R.string.cancel), null)
                 .show()
         }
     }

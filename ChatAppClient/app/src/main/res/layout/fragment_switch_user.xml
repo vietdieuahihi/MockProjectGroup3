@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/define_dimen_30"
-        android:paddingVertical="10dp"
+        android:paddingVertical="@dimen/define_dimen_10"
         android:text="@string/title_switch_user"
         android:textColor="@android:color/white"
         android:textSize="@dimen/text_size_20"

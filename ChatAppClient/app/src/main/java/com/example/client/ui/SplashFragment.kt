@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.client.MainActivity
 import com.example.client.R
-import com.example.client.data.constants.ConnectionState
+import com.example.client.constants.ConnectionState
 import com.example.client.databinding.FragmentSplashBinding
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Timer
 import java.util.TimerTask
 
+@AndroidEntryPoint
 class SplashFragment : Fragment() {
 
     private var _binding: FragmentSplashBinding? = null

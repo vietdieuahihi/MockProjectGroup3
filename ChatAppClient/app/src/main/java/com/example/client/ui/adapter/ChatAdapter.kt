@@ -33,7 +33,8 @@ class ChatAdapter(
 
         fun bind(chat: Chat) {
             userViewModel.fetchUserById(yourId).let { user ->
-                Glide.with(binding.imgConversation).load(user?.avatar ?: "").placeholder(R.drawable.baseline_person_24)
+                Glide.with(binding.imgConversation).load(user?.avatar ?: "")
+                    .placeholder(R.drawable.baseline_person_24)
                     .into(binding.imgConversation)
             }
             binding.textMessage.text = chat.message

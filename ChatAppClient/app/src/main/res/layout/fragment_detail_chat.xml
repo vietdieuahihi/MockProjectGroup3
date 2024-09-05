@@ -81,8 +81,8 @@
 
         <ImageView
             android:id="@+id/icDelete"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="@dimen/define_dimen_35"
+            android:layout_height="@dimen/define_dimen_35"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_delete"

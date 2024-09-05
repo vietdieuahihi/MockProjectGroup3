@@ -8,7 +8,8 @@ import java.util.Date
 @SuppressLint("SimpleDateFormat")
 fun Long.toTime(): String {
     val date = Date(this)
-    val format = if (this.isCurrentDay()) SimpleDateFormat("HH:mm") else SimpleDateFormat("dd-MM-yyyy")
+    val format =
+        if (this.isCurrentDay()) SimpleDateFormat("HH:mm") else SimpleDateFormat("dd-MM-yyyy")
     return format.format(date)
 }
 

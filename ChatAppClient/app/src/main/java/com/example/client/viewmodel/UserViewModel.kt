@@ -1,4 +1,3 @@
-// UserViewModel.kt
 package com.example.client.viewmodel
 
 import android.app.Application
@@ -25,7 +24,9 @@ class UserViewModel @Inject constructor(
     init {
         users.observeForever { userList ->
             // Set default user to the one with id = 1 if available
-            repository.getUserById(userList.find { it.userid == 1 }?.userid ?: userList.firstOrNull()?.userid ?: 1)
+            repository.getUserById(
+                userList.find { it.userid == 1 }?.userid ?: userList.firstOrNull()?.userid ?: 1
+            )
         }
     }
 

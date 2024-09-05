@@ -26,7 +26,9 @@ import com.example.client.viewmodel.ConversationViewModel
 import com.example.client.viewmodel.UserViewModel
 import com.example.server.entity.Conversation
 import com.example.server.entity.User
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentListConversationBinding? = null

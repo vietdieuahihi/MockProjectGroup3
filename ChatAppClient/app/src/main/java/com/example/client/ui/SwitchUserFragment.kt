@@ -13,7 +13,9 @@ import com.example.client.MainActivity
 import com.example.client.databinding.FragmentSwitchUserBinding
 import com.example.client.ui.adapter.UserAdapter
 import com.example.client.viewmodel.UserViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SwitchUserFragment : Fragment() {
 
     private var _binding: FragmentSwitchUserBinding? = null

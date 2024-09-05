@@ -28,17 +28,20 @@ class ConversationAdapter(
             // Fetch User object based on receiverId
             val selfId = userViewModel.currentUser.value?.userid
 
-            val userId = if (conversation.senderId == selfId) conversation.receiverId else conversation.senderId
+            val userId =
+                if (conversation.senderId == selfId) conversation.receiverId else conversation.senderId
             println("VietDQ15: selfId = $selfId, userId = $userId")
 
             userViewModel.fetchUserById(userId).let { user ->
                 if (user != null) {
                     binding.tvUsername.text = user.username // Use the username from User
                 } else {
-                    binding.tvUsername.text = "Unknown User" // Fallback in case user is not found
+                    binding.tvUsername.text = user?.username
+                        ?: binding.root.context.getString(R.string.unknown_user) // Fallback in case user is not found
                 }
 
-                Glide.with(binding.imgConversation).load(user?.avatar ?: "").placeholder(R.drawable.baseline_person_24)
+                Glide.with(binding.imgConversation).load(user?.avatar ?: "")
+                    .placeholder(R.drawable.baseline_person_24)
                     .into(binding.imgConversation)
             }
 

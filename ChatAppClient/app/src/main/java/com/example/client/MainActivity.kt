@@ -9,10 +9,12 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.client.data.constants.ConnectionState
+import com.example.client.constants.ConnectionState
 import com.example.client.databinding.ActivityMainBinding
 import com.example.server.IMessageService
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

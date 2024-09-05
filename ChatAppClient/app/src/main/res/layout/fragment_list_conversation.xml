@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/define_dimen_30"
-            android:paddingVertical="10dp"
+            android:paddingVertical="@dimen/define_dimen_10"
             android:text="@string/title_conversations"
             android:textColor="@android:color/white"
             android:textSize="@dimen/text_size_20"
@@ -96,7 +96,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:padding="@dimen/define_dimen_10">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="@dimen/define_dimen_40"
@@ -118,13 +118,13 @@
                 android:id="@+id/tvUsername"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="@dimen/define_dimen_20"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="@string/example_username"
                 android:textColor="@color/black"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_18"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/tvLastMessage"
                 app:layout_constraintStart_toEndOf="@id/imgConversation"

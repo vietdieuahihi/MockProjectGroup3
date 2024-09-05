@@ -17,7 +17,7 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgConversation"
-            android:layout_width="@dimen/define_dimen_40"
+            android:layout_width="@dimen/define_dimen_35"
             android:layout_height="@dimen/define_dimen_40"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
@@ -44,7 +44,7 @@
         android:id="@+id/text_timestamp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="@dimen/define_dimen_6"
         android:text="@string/example_time"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_10"
