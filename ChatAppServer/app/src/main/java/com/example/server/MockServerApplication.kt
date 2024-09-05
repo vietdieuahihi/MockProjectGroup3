@@ -26,4 +26,3 @@ class MockServerApplication : Application() {
         MockData.insertMockData(userRepository, conversationRepository, chatRepository)
     }
 }
-

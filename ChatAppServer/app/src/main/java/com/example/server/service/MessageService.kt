@@ -9,13 +9,14 @@ import com.example.server.data.repository.ChatRepository
 import com.example.server.data.repository.ConversationRepository
 import com.example.server.data.repository.UserRepository
 import com.example.server.entity.Chat
-import com.example.server.entity.User
 import com.example.server.entity.Conversation
+import com.example.server.entity.User
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MessageService : Service() {
@@ -34,8 +35,6 @@ class MessageService : Service() {
         return mBinder
     }
 
-
-    
     private val mBinder = object : IMessageService.Stub() {
 
         override fun getConversation(): List<Conversation> {
@@ -44,23 +43,34 @@ class MessageService : Service() {
         }
 
         override fun getUsers(): List<User> {
-            Log.d(TAG, "getUsers() called")
-            return userRepository.getRemoteAllUsers()
+            return runBlocking(Dispatchers.IO) {
+                Log.d(TAG, "getUsers() called")
+                userRepository.getRemoteAllUsers()
+            }
         }
 
         override fun getChat(conversationId: Int): List<Chat> {
-            Log.d(TAG, "getChat() called")
-            return chatRepository.getChatByConversationId(conversationId)
+            return runBlocking(Dispatchers.IO) {
+
+                Log.d(TAG, "getChat() called")
+                chatRepository.getChatByConversationId(conversationId)
+            }
         }
 
         override fun getUserById(userId: Int): User? {
-            Log.d(TAG, "getUserById() called with userId: $userId")
-            return userRepository.getUserById(userId)
+            return runBlocking(Dispatchers.IO) {
+
+                Log.d(TAG, "getUserById() called with userId: $userId")
+                userRepository.getUserById(userId)
+            }
         }
 
         override fun fetchCurrentUser(): User? {
-            Log.d(TAG, "getCurrentUser() called")
-            return userRepository.getCurrentUser()
+            return runBlocking(Dispatchers.IO) {
+
+                Log.d(TAG, "getCurrentUser() called")
+                userRepository.getCurrentUser()
+            }
         }
 
         override fun switchUser(userId: Int) {
@@ -75,6 +85,19 @@ class MessageService : Service() {
                 CoroutineScope(Dispatchers.IO).launch {
                     chatRepository.insertChat(it).collect {}
                 }
+            }
+        }
+
+        override fun hideChat(chatId: Long) {
+            Log.d(TAG, "hideChat() called with chatId: $chatId")
+            CoroutineScope(Dispatchers.IO).launch {
+                chatRepository.hideChat(chatId).collect {}
+            }
+        }
+
+        override fun getChatById(chatId: Long): Chat? {
+            return runBlocking(Dispatchers.IO) {
+                chatRepository.getChatById(chatId)
             }
         }
 
@@ -93,12 +116,14 @@ class MessageService : Service() {
         override fun updateConversation(
             conversationId: Int,
             lastMessage: String?,
+            lastMessageId: Long,
             timestamp: String?
         ) {
             CoroutineScope(Dispatchers.IO).launch {
                 conversationRepository.updateConversation(
                     conversationId,
                     lastMessage!!,
+                    lastMessageId,
                     timestamp!!
                 ).collect {}
             }
@@ -125,10 +150,16 @@ class MessageService : Service() {
         }
 
         override fun getConversationsForUser(userId: Int): MutableList<Conversation> {
-            Log.d(TAG, "getConversationsForUser() called with userId: $userId")
-            val conversations = conversationRepository.getConversationsForUser(userId)
-            Log.d(TAG, "Fetched conversations: ${conversations.size} for userId: $userId")
-            return conversations.toMutableList()
+            return runBlocking(Dispatchers.IO) {
+
+                Log.d(TAG, "getConversationsForUser() called with userId: $userId")
+                val conversations = conversationRepository.getConversationsForUser(userId)
+                Log.d(
+                    TAG,
+                    "Fetched conversations: ${conversations.size} for userId: $userId"
+                )
+                conversations.toMutableList()
+            }
         }
     }
 
@@ -137,6 +168,6 @@ class MessageService : Service() {
     }
 
     companion object {
-        private const val TAG = "MockServer"
+        private const val TAG = "MessageService"
     }
 }
