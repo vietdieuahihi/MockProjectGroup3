@@ -9,8 +9,10 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.client.constants.ConnectionState
+import com.example.client.utils.ConnectionState
 import com.example.client.databinding.ActivityMainBinding
+import com.example.client.utils.SERVER_PACKAGE_NAME
+import com.example.client.utils.SERVER_SERVICE_CLASS_NAME
 import com.example.server.IMessageService
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,23 +45,27 @@ class MainActivity : AppCompatActivity() {
     private fun bindService() {
         connectionState = ConnectionState.LOADING
         val intent = Intent().apply {
-            setClassName("com.example.server", "com.example.server.service.MessageService")
+            setClassName(SERVER_PACKAGE_NAME, SERVER_SERVICE_CLASS_NAME)
         }
         val bound = bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        Log.d("VietDQ15", "Service bind attempt: $bound")
+        Log.d(TAG, "Service bind attempt: $bound")
     }
 
     private val serviceConnection = object : android.content.ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             connectionState = ConnectionState.CONNECTED
             messageService = IMessageService.Stub.asInterface(service)
-            Log.d("VietDQ15", "Service connected: $name")
+            Log.d(TAG, "Service connected: $name")
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             // messageService = null
             connectionState = ConnectionState.DISCONNECTED
-            Log.d("VietDQ15", "Service disconnected: $name")
+            Log.d(TAG, "Service disconnected: $name")
         }
+    }
+    
+    companion object {
+        const val TAG = "MainActivity"
     }
 }

@@ -51,13 +51,16 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
         chatViewModel.initService((requireActivity() as MainActivity).messageService)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentListConversationBinding.inflate(inflater, container, false)
         setupViews()
         setupConversationRecyclerView()
         observeConversations()
 
-        // Load default user
         loadCurrentUser()
 
         observeUsers()
@@ -69,7 +72,8 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
 
     private fun observeUsers() {
         userViewModel.users.observe(viewLifecycleOwner) { users ->
-            println("VietDQ15: observeUsers is call $users")
+//            println("VietDQ15: observeUsers is call $users")
+            Log.d(TAG, "observeUsers: $users")
             this.users = users
 
 //            with(binding.spUserList) {
@@ -102,9 +106,9 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
             val userId = if (it.senderId == selfId) it.receiverId else it.senderId
             userViewModel.fetchUserById(userId).let { user ->
                 if (user == null) return@ConversationAdapter
-                AlertDialog.Builder(requireContext()).setTitle("Confirm")
+                AlertDialog.Builder(requireContext()).setTitle(getString(R.string.title_confirm))
                     .setMessage("Are you sure you want to delete ${user.username} as friends?")
-                    .setPositiveButton("OK") { _, _ ->
+                    .setPositiveButton(getString(R.string.ok)) { _, _ ->
 
                         var timeDeleteSender: Long = it.timeDeleteSender
                         var timeDeleteReceiver: Long = it.timeDeleteReceiver
@@ -117,7 +121,7 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
                             it.conversationId, timeDeleteSender, timeDeleteReceiver
                         )
                         userViewModel.fetchCurrentUser()
-                    }.setNegativeButton("Cancel", null).show()
+                    }.setNegativeButton(getString(R.string.cancel), null).show()
             }
 
         }, userViewModel, this)
@@ -135,9 +139,9 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
     }
 
     private fun loadCurrentUser() {
-        println("VietDQ15: loadCurrentUser is call")
+        Log.d(TAG, "loadCurrentUser is call")
         userViewModel.fetchCurrentUser().observe(viewLifecycleOwner) { user ->
-            println("VietDQ15: loadCurrentUser is call $user")
+            Log.d(TAG, "loadCurrentUser: $user")
             currentUser = user
             userViewModel.currentUserV2 = user
 
@@ -149,12 +153,17 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
     }
 
     private fun fetchConversationsForUser(user: User) {
-        println("VietDQ15: fetchConversationsForUser is call $user")
+        Log.d(TAG, "fetchConversationsForUser: $user")
 //        conversationAdapter.submitList(listOf())
-        conversationViewModel.fetchConversationsForUser(user.userid).observe(viewLifecycleOwner) { conversations ->
-            conversationAdapter.submitList(conversations)
-            Handler(Looper.getMainLooper()).postDelayed({ conversationAdapter.submitList(conversations) }, 200L)
-        }
+        conversationViewModel.fetchConversationsForUser(user.userid)
+            .observe(viewLifecycleOwner) { conversations ->
+                conversationAdapter.submitList(conversations)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    conversationAdapter.submitList(
+                        conversations
+                    )
+                }, 200L)
+            }
     }
 
     private fun loadUser(userId: Int) {
@@ -167,7 +176,8 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
 
     private fun updateUserInfo(user: User) {
         Glide.with(this).load(user.avatar).placeholder(R.drawable.ic_avt).into(binding.avatar)
-        Glide.with(this).load(user.avatar).placeholder(R.drawable.ic_avt).into(binding.imgConversation)
+        Glide.with(this).load(user.avatar).placeholder(R.drawable.ic_avt)
+            .into(binding.imgConversation)
         binding.tvUsername.text = user.username
     }
 
@@ -194,7 +204,7 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
         users?.let {
             val item = it[p2]
             Log.d(
-                "VietDQ15",
+                TAG,
                 "item.userid = ${item.userid}, currentUser?.userid = ${currentUser?.userid}, item.userid == currentUser?.userid = ${item.userid == currentUser?.userid}"
             )
             if (item.userid == currentUser?.userid) return
@@ -207,5 +217,9 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
 
+    }
+
+    companion object {
+        private const val TAG = "VietDQ15"
     }
 }

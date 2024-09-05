@@ -1,6 +1,7 @@
 package com.example.client.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.example.client.data.repository.AppRepository
@@ -52,7 +53,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun switchUser(user: User) {
-        println("VietDQ15: switchUser is call $user")
+        Log.d("VietDQ15", "switchUser is call $user")
         repository.switchUser(user.userid)
     }
 }

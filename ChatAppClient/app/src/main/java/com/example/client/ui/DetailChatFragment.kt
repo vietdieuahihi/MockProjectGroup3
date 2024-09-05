@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.client.MainActivity
 import com.example.client.R
-import com.example.client.constants.KEY_CONVERSATION
-import com.example.client.constants.KEY_USER
+import com.example.client.utils.KEY_CONVERSATION
+import com.example.client.utils.KEY_USER
 import com.example.client.databinding.FragmentDetailChatBinding
 import com.example.client.ui.adapter.ChatAdapter
 import com.example.client.viewmodel.ChatViewModel
