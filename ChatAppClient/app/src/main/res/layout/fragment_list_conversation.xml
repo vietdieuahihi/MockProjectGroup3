@@ -78,9 +78,9 @@
             android:layout_height="match_parent"
             android:background="@drawable/white_rectangle"
             android:clipToPadding="false"
-            tools:listitem="@layout/item_conversation"
             android:paddingHorizontal="@dimen/define_dimen_10"
-            android:paddingVertical="@dimen/define_dimen_30" />
+            android:paddingVertical="@dimen/define_dimen_30"
+            tools:listitem="@layout/item_conversation" />
     </LinearLayout>
 
     <RelativeLayout
@@ -91,13 +91,25 @@
         android:background="@android:color/white"
         android:padding="@dimen/define_dimen_16">
 
+        <TextView
+            android:id="@+id/tvSwitchUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:paddingVertical="@dimen/define_dimen_10"
+            android:text="@string/title_switch_user"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_18"
+            android:textStyle="bold" />
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/layoutSwitchUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/tvSwitchUser"
+            android:background="@color/light_gray"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:background="@color/light_gray"
             android:padding="@dimen/define_dimen_10">
 
             <androidx.cardview.widget.CardView
