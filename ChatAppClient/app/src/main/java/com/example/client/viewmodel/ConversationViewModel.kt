@@ -3,7 +3,6 @@ package com.example.client.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import com.example.client.data.repository.AppRepository
 import com.example.server.IMessageService
 import com.example.server.entity.Conversation
@@ -17,9 +16,6 @@ class ConversationViewModel @Inject constructor(
 
     private val repository: AppRepository = AppRepository(application.applicationContext)
 
-    private val _conversations = MediatorLiveData<List<Conversation>>()
-    val conversations: LiveData<List<Conversation>> get() = _conversations
-
     fun initService(messageService: IMessageService) {
         repository.initService(messageService)
     }
@@ -32,17 +28,12 @@ class ConversationViewModel @Inject constructor(
 //            }
 //        }
 
-
         repository.fetchConversationsForUser(userId)
         return repository.conversations
     }
 
-    fun deleteConversation(conversation: Conversation) {
-        repository.hideConversation(conversation)
-    }
-
-    fun updateConversation(conversationId: Int, lastMessage: String, timestamp: String) {
-        repository.updateConversation(conversationId, lastMessage, timestamp)
+    fun updateConversation(conversationId: Int, lastMessage: String, lastMessageId: Long, timestamp: String) {
+        repository.updateConversation(conversationId, lastMessage, lastMessageId, timestamp)
     }
 
     fun updateConversation(conversationId: Int, timeDeleteSender: Long, timeDeleteReceiver: Long) {

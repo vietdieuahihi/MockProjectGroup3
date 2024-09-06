@@ -1,10 +1,8 @@
 package com.example.client.ui
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,10 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.client.MainActivity
 import com.example.client.R
-import com.example.client.utils.KEY_CONVERSATION
-import com.example.client.utils.KEY_USER
 import com.example.client.databinding.FragmentDetailChatBinding
+import com.example.client.internal.SessionManager
 import com.example.client.ui.adapter.ChatAdapter
+import com.example.client.utils.KEY_CONVERSATION
 import com.example.client.viewmodel.ChatViewModel
 import com.example.client.viewmodel.ConversationViewModel
 import com.example.client.viewmodel.UserViewModel
@@ -40,12 +38,10 @@ class DetailChatFragment : Fragment() {
     private lateinit var conversation: Conversation
     private lateinit var selfUser: User
     private val yourId: Int by lazy {
-        if (selfUser.userid == conversation.senderId)
-            conversation.receiverId
-        else conversation.senderId
+        if (selfUser.userId == conversation.senderId) conversation.receiverId else conversation.senderId
     }
-
     private val original: ArrayList<Chat> = arrayListOf()
+    private lateinit var adapter: ChatAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +49,6 @@ class DetailChatFragment : Fragment() {
         conversationViewModel.initService((requireActivity() as MainActivity).messageService)
         chatViewModel.initService((requireActivity() as MainActivity).messageService)
     }
-
-    private lateinit var adapter: ChatAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,93 +59,110 @@ class DetailChatFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let {
             (it.getSerializable(KEY_CONVERSATION) as? Conversation)?.let { data ->
                 conversation = data
             }
-            chatViewModel.getChatByConversationId(conversation.conversationId)
-            (it.getSerializable(KEY_USER) as? User)?.let { data ->
-                selfUser = data
-            }
 
-            if (!::conversation.isInitialized) {
+            SessionManager.getIns().currentUser?.let { user -> selfUser = user }
+
+            if (!::conversation.isInitialized || !::selfUser.isInitialized) {
                 findNavController().popBackStack()
                 return
             }
+            // get data chats
+            chatViewModel.getChatByConversationId(conversation.conversationId)
+            // get data info yourUser
             userViewModel.fetchUserById(yourId).let { user ->
-                if (user != null) {
-                    binding.tvUsername.text = user.username // Use the username from User
-                } else {
-                    binding.tvUsername.setText(getString(R.string.unknown_user))
-                }
-
+                binding.tvUsername.text =
+                    user?.username ?: requireContext().getString(R.string.unknown_user)
                 Glide.with(binding.imgConversation).load(user?.avatar ?: "")
                     .placeholder(R.drawable.baseline_person_24)
                     .into(binding.imgConversation)
             }
         }
 
-        adapter = ChatAdapter(selfUser.userid, yourId, userViewModel)
+//        adapter = ChatAdapter(selfUser.userid, yourId, userViewModel)
+        adapter = ChatAdapter(selfUser.userId, yourId, userViewModel) { chat ->
+            AlertDialog.Builder(requireContext()).setTitle("Confirm")
+                .setMessage("Are you sure you want to delete the message?")
+                .setPositiveButton("OK") { _, _ ->
+                    chatViewModel.hideChat(chat.chatId)
+                    original.removeIf { it.chatId == chat.chatId }
+                    adapter.notifyDataSetChanged()
+                    scrollToEnd()
+                }.setNegativeButton("Cancel", null).show()
+        }
+
         binding.rcvChat.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@DetailChatFragment.adapter
+            addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+                if (bottom < oldBottom) {
+                    this.postDelayed({
+                        scrollToEnd()
+                    }, 100)
+                }
+            }
         }
-        chatViewModel.chatInConversation.observe(viewLifecycleOwner) {
-            val timeDelete = if (selfUser.userid == conversation.senderId) {
+
+        chatViewModel.chatInConversation.observe(viewLifecycleOwner) { it ->
+            val timeDelete = if (selfUser.userId == conversation.senderId) {
                 conversation.timeDeleteSender
             } else {
                 conversation.timeDeleteReceiver
             }
 
-            it.forEach {
-                Log.d("VietDQ15", "$it")
+            it.filter { chat ->
+                chat.timestamp.isNotEmpty()
+                        && chat.timestamp.toLong() > timeDelete
+                        && ((chat.senderId == selfUser.userId && chat.flag == 1) || chat.senderId != selfUser.userId)
+            }.also {
+                original.addAll(it)
+                adapter.submitList(it)
             }
-            val result =
-                it.filter { chats -> chats.timestamp.isNotEmpty() && chats.timestamp.toLong() > timeDelete }
-            original.addAll(result)
-            adapter.submitList(result)
-
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.rcvChat.smoothScrollToPosition(
-                    original.size
-                )
-            }, 200L)
+            scrollToEnd()
         }
         binding.icSend.setOnClickListener {
             val message = binding.etInputMessage.text.toString().trim()
             if (message.isEmpty()) return@setOnClickListener
 
-            val yourId = if (selfUser.userid == conversation.senderId)
+            val yourId = if (selfUser.userId == conversation.senderId)
                 conversation.receiverId
             else conversation.senderId
+            val now = System.currentTimeMillis()
             val chat = Chat(
-                senderId = selfUser.userid,
+                chatId = now,
+                senderId = selfUser.userId,
                 receiverId = yourId,
                 message = message,
-                timestamp = System.currentTimeMillis().toString(),
+                timestamp = now.toString(),
                 conversationId = conversation.conversationId
             )
             original.add(chat)
             binding.etInputMessage.setText("")
+
             chatViewModel.sendMessage(chat)
             conversationViewModel.updateConversation(
                 conversation.conversationId,
                 message,
+                now,
                 chat.timestamp
             )
+
             adapter.submitList(original)
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.rcvChat.smoothScrollToPosition(
-                    original.size
-                )
-            }, 300L)
+
+            scrollToEnd()
         }
+
         binding.icBack.setOnClickListener {
             findNavController().popBackStack()
         }
+
         binding.icDelete.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle(getString(R.string.confirm))
@@ -159,7 +170,7 @@ class DetailChatFragment : Fragment() {
                 .setPositiveButton(getString(R.string.ok)) { _, _ ->
                     var timeDeleteSender: Long = conversation.timeDeleteSender
                     var timeDeleteReceiver: Long = conversation.timeDeleteReceiver
-                    if (selfUser.userid == conversation.senderId) {
+                    if (selfUser.userId == conversation.senderId) {
                         timeDeleteSender = System.currentTimeMillis()
                     } else {
                         timeDeleteReceiver = System.currentTimeMillis()
@@ -174,6 +185,12 @@ class DetailChatFragment : Fragment() {
                 }.setNegativeButton(getString(R.string.cancel), null)
                 .show()
         }
+    }
+
+    private fun scrollToEnd() {
+        binding.rcvChat.postDelayed({
+            binding.rcvChat.scrollToPosition(this@DetailChatFragment.adapter.itemCount - 1)
+        }, 50L)
     }
 
     override fun onDestroyView() {

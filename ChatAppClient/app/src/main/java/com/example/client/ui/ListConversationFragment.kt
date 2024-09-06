@@ -2,13 +2,9 @@ package com.example.client.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ImageView
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
@@ -20,7 +16,9 @@ import com.bumptech.glide.Glide
 import com.example.client.MainActivity
 import com.example.client.R
 import com.example.client.databinding.FragmentListConversationBinding
+import com.example.client.internal.SessionManager
 import com.example.client.ui.adapter.ConversationAdapter
+import com.example.client.utils.KEY_CONVERSATION
 import com.example.client.viewmodel.ChatViewModel
 import com.example.client.viewmodel.ConversationViewModel
 import com.example.client.viewmodel.UserViewModel
@@ -29,7 +27,7 @@ import com.example.server.entity.User
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class ListConversationFragment : Fragment() {
 
     private var _binding: FragmentListConversationBinding? = null
     private val binding get() = _binding!!
@@ -41,8 +39,8 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
     private lateinit var conversationAdapter: ConversationAdapter
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var avatarButton: ImageView
-    private var currentUser: User? = null
-    private var users: List<User>? = null
+
+    private val sessionManager: SessionManager by lazy { SessionManager.getIns() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,40 +49,20 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
         chatViewModel.initService((requireActivity() as MainActivity).messageService)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListConversationBinding.inflate(inflater, container, false)
         setupViews()
         setupConversationRecyclerView()
-        observeConversations()
 
+        // Load default user
         loadCurrentUser()
 
-        observeUsers()
-
         // Set click listener to open drawer when avatar is clicked
-        avatarButton.setOnClickListener { drawerLayout.openDrawer(binding.leftMenu) }
-        return binding.root
-    }
-
-    private fun observeUsers() {
-        userViewModel.users.observe(viewLifecycleOwner) { users ->
-//            println("VietDQ15: observeUsers is call $users")
-            Log.d(TAG, "observeUsers: $users")
-            this.users = users
-
-//            with(binding.spUserList) {
-//                if (adapter == null) {
-//                    isSelected = false
-//                    adapter = SpinnerUserAdapter(users)
-//                    binding.spUserList.onItemSelectedListener = this@ListConversationFragment
-//                    setSelection(users.indexOfFirst { it.flag == 1 }, false)
-//                }
-//            }
+        avatarButton.setOnClickListener {
+            drawerLayout.openDrawer(binding.leftMenu)
         }
+
+        return binding.root
     }
 
     private fun setupViews() {
@@ -93,6 +71,8 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
         avatarButton = binding.avatar
 
         binding.layoutSwitchUser.setOnClickListener {
+            conversationAdapter.submitList(null)
+            conversationAdapter.submitList(listOf())
             drawerLayout.close()
             findNavController().navigate(R.id.action_listConversationFragment_to_switchUserFragment)
         }
@@ -102,11 +82,11 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
         conversationAdapter = ConversationAdapter(onItemClick = { conversation ->
             navigateToDetail(conversation)
         }, onItemLongClick = {
-            val selfId = userViewModel.currentUser.value?.userid
+            val selfId = userViewModel.currentUser.value?.userId
             val userId = if (it.senderId == selfId) it.receiverId else it.senderId
             userViewModel.fetchUserById(userId).let { user ->
                 if (user == null) return@ConversationAdapter
-                AlertDialog.Builder(requireContext()).setTitle(getString(R.string.title_confirm))
+                AlertDialog.Builder(requireContext()).setTitle(getString(R.string.confirm))
                     .setMessage("Are you sure you want to delete ${user.username} as friends?")
                     .setPositiveButton(getString(R.string.ok)) { _, _ ->
 
@@ -124,102 +104,46 @@ class ListConversationFragment : Fragment(), AdapterView.OnItemSelectedListener 
                     }.setNegativeButton(getString(R.string.cancel), null).show()
             }
 
-        }, userViewModel, this)
+        }, userViewModel, chatViewModel, this)
         with(binding.userList) {
             setHasFixedSize(true)
+            itemAnimator = null
             layoutManager = LinearLayoutManager(requireContext())
             adapter = conversationAdapter
         }
     }
 
-    private fun observeConversations() {
-//        conversationViewModel.conversations.observe(viewLifecycleOwner) { conversations ->
-//            conversationAdapter.submitList(conversations)
-//        }
-    }
-
     private fun loadCurrentUser() {
-        Log.d(TAG, "loadCurrentUser is call")
         userViewModel.fetchCurrentUser().observe(viewLifecycleOwner) { user ->
-            Log.d(TAG, "loadCurrentUser: $user")
-            currentUser = user
-            userViewModel.currentUserV2 = user
-
+            sessionManager.currentUser = user
             updateUserInfo(user)
-//            // load all user
-//            userViewModel.getUsers()
             fetchConversationsForUser(user)
         }
     }
 
     private fun fetchConversationsForUser(user: User) {
-        Log.d(TAG, "fetchConversationsForUser: $user")
-//        conversationAdapter.submitList(listOf())
-        conversationViewModel.fetchConversationsForUser(user.userid)
-            .observe(viewLifecycleOwner) { conversations ->
-                conversationAdapter.submitList(conversations)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    conversationAdapter.submitList(
-                        conversations
-                    )
-                }, 200L)
-            }
-    }
-
-    private fun loadUser(userId: Int) {
-        userViewModel.getUserById(userId).observe(viewLifecycleOwner) { user ->
-            currentUser = user
-            userViewModel.currentUserV2 = user
-            updateUserInfo(user)
+        conversationViewModel.fetchConversationsForUser(user.userId).observe(viewLifecycleOwner) { conversations ->
+            conversationAdapter.submitList(null)
+            conversationAdapter.submitList(listOf())
+            conversationAdapter.submitList(conversations)
         }
     }
 
     private fun updateUserInfo(user: User) {
         Glide.with(this).load(user.avatar).placeholder(R.drawable.ic_avt).into(binding.avatar)
-        Glide.with(this).load(user.avatar).placeholder(R.drawable.ic_avt)
-            .into(binding.imgConversation)
+        Glide.with(this).load(user.avatar).placeholder(R.drawable.ic_avt).into(binding.imgConversation)
         binding.tvUsername.text = user.username
-    }
-
-    private fun switchUser(user: User) {
-        loadUser(user.userid)
-        drawerLayout.closeDrawer(binding.leftMenu)
-        conversationViewModel.fetchConversationsForUser(user.userid)
     }
 
     private fun navigateToDetail(conversation: Conversation) {
         findNavController().navigate(
-            R.id.action_listConversationFragment_to_detailChatFragment, bundleOf(
-                "conversation" to conversation, "user" to userViewModel.currentUser.value
-            )
+            R.id.action_listConversationFragment_to_detailChatFragment,
+            bundleOf(KEY_CONVERSATION to conversation)
         )
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        users?.let {
-            val item = it[p2]
-            Log.d(
-                TAG,
-                "item.userid = ${item.userid}, currentUser?.userid = ${currentUser?.userid}, item.userid == currentUser?.userid = ${item.userid == currentUser?.userid}"
-            )
-            if (item.userid == currentUser?.userid) return
-            currentUser = item
-            userViewModel.switchUser(item)
-            drawerLayout.close()
-            loadCurrentUser()
-        }
-    }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {
-
-    }
-
-    companion object {
-        private const val TAG = "VietDQ15"
     }
 }

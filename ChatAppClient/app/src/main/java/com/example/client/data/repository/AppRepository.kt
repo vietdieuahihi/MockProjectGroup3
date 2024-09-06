@@ -39,7 +39,7 @@ class AppRepository @Inject constructor(private val context: Context) {
             try {
                 val userList = messageService?.getUsers() ?: emptyList()
                 Log.d(TAG, "Fetched users: ${userList.size} users received.")
-                _users.postValue(userList.sortedBy { it.userid })
+                _users.postValue(userList.sortedBy { it.userId })
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching users: ${e.message}", e)
             }
@@ -68,10 +68,10 @@ class AppRepository @Inject constructor(private val context: Context) {
         }
     }
 
-    fun updateConversation(conversationId: Int, lastMessage: String, timestamp: String) {
+    fun updateConversation(conversationId: Int, lastMessage: String, lastMessageId: Long, timestamp: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                messageService?.updateConversation(conversationId, lastMessage, timestamp)
+                messageService?.updateConversation(conversationId, lastMessage, lastMessageId, timestamp)
             } catch (e: Exception) {
                 Log.e(TAG, "Error hide conversations: ${e.message}", e)
             }
@@ -97,7 +97,7 @@ class AppRepository @Inject constructor(private val context: Context) {
                     Log.d(TAG, "Fetched user with ID $userId: ${it.username}")
                 } ?: Log.e(TAG, "User with ID $userId not found.")
             } catch (e: Exception) {
-                Log.d("getUserByIdqweq", "Error")
+                Log.d(TAG, "Error")
                 Log.e(TAG, "Error fetching user by ID: ${e.message}", e)
             }
         }
@@ -111,10 +111,10 @@ class AppRepository @Inject constructor(private val context: Context) {
                 val user = messageService?.fetchCurrentUser()
                 user?.let {
                     _currentUser.postValue(it)
-                    Log.d(TAG, "1Fetched user with ID ${it.userid}: ${it.username}")
-                } ?: Log.e(TAG, "1Current user not found.")
+                    Log.d(TAG, "Fetched user with ID ${it.userId}: ${it.username}")
+                } ?: Log.e(TAG, "Current user not found.")
             } catch (e: Exception) {
-                Log.e(TAG, "1Error fetching current user: ${e.message}", e)
+                Log.e(TAG, "Error fetching current user: ${e.message}", e)
             }
         }
     }
@@ -123,11 +123,17 @@ class AppRepository @Inject constructor(private val context: Context) {
         messageService?.switchUser(userId)
     }
 
-    fun getAllChatsByConversationId(conversationId: Int) = messageService?.getChat(conversationId)
+    fun getAllChatsByConversationId(conversationId: Int): MutableList<Chat>? = messageService?.getChat(conversationId)
 
     fun sendMessage(chat: Chat) {
         messageService?.sendMessage(chat)
     }
+
+    fun hideChat(chatId: Long) {
+        messageService?.hideChat(chatId)
+    }
+
+    fun getChatById(chatId: Long) = messageService?.getChatById(chatId)
 
     companion object {
         private const val TAG = "UserRepository"

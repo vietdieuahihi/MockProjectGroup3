@@ -1,6 +1,5 @@
 package com.example.client.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
@@ -12,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.client.R
 import com.example.client.databinding.ItemConversationBinding
 import com.example.client.utils.toTime
+import com.example.client.viewmodel.ChatViewModel
 import com.example.client.viewmodel.UserViewModel
 import com.example.server.entity.Conversation
 
@@ -19,6 +19,7 @@ class ConversationAdapter(
     private val onItemClick: (Conversation) -> Unit,
     private val onItemLongClick: (Conversation) -> Unit,
     private val userViewModel: UserViewModel,
+    private val chatViewModel: ChatViewModel,
     private val lifecycleOwner: LifecycleOwner
 ) : ListAdapter<Conversation, ConversationAdapter.ConversationViewHolder>(ConversationDiffCallback()) {
 
@@ -27,21 +28,15 @@ class ConversationAdapter(
 
         fun bind(conversation: Conversation) {
             // Fetch User object based on receiverId
-            val selfId = userViewModel.currentUser.value?.userid
+            val selfId = userViewModel.currentUser.value?.userId
 
-            val userId =
-                if (conversation.senderId == selfId) conversation.receiverId else conversation.senderId
-            Log.d("VietDQ15", "selfId = $selfId, userId = $userId")
+            val userId = if (conversation.senderId == selfId) conversation.receiverId else conversation.senderId
 
             userViewModel.fetchUserById(userId).let { user ->
-                if (user != null) {
-                    binding.tvUsername.text = user.username // Use the username from User
-                } else {
-                    binding.tvUsername.text = user?.username
-                        ?: binding.root.context.getString(R.string.unknown_user) // Fallback in case user is not found
-                }
-
-                Glide.with(binding.imgConversation).load(user?.avatar ?: "")
+                binding.tvUsername.text = user?.username ?: binding.root.context.getString(R.string.unknown_user)
+                Glide
+                    .with(binding.imgConversation)
+                    .load(user?.avatar ?: "")
                     .placeholder(R.drawable.baseline_person_24)
                     .into(binding.imgConversation)
             }
@@ -65,9 +60,24 @@ class ConversationAdapter(
                 }
             }
 
-            binding.tvLastMessage.text = conversation.lastMessage
-            binding.tvTimestamp.text = conversation.timestamp.toLong().toTime()
+            conversation.lastMessageId?.let {
+                val lastChat = chatViewModel.getChat(it)
+                lastChat?.let { chat ->
+                    if (chat.senderId != selfId) {
+                        binding.tvLastMessage.text = conversation.lastMessage
+                    } else if (chat.flag == 1) {
+                        binding.tvLastMessage.text = conversation.lastMessage
+                    } else {
+                        binding.tvLastMessage.text = binding.root.context.getString(R.string.deleted_the_message)
+                    }
+                } ?: kotlin.run {
+                    binding.tvLastMessage.text = conversation.lastMessage
+                }
+            } ?: kotlin.run {
+                binding.tvLastMessage.text = conversation.lastMessage
+            }
 
+            binding.tvTimestamp.text = conversation.timestamp.toLong().toTime()
             binding.root.setOnClickListener {
                 onItemClick(conversation)
             }
@@ -94,10 +104,10 @@ class ConversationAdapter(
 
 class ConversationDiffCallback : DiffUtil.ItemCallback<Conversation>() {
     override fun areItemsTheSame(oldItem: Conversation, newItem: Conversation): Boolean {
-        return oldItem == newItem
+        return false
     }
 
     override fun areContentsTheSame(oldItem: Conversation, newItem: Conversation): Boolean {
-        return oldItem == newItem
+        return false
     }
 }

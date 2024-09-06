@@ -51,10 +51,10 @@ class UserAdapter(
 
 class UserDiffCallback : DiffUtil.ItemCallback<User>() {
     override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
-        return oldItem.userid == newItem.userid && oldItem.flag == newItem.flag
+        return oldItem.userId == newItem.userId && oldItem.flag == newItem.flag
     }
 
     override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
-        return oldItem == newItem && oldItem.userid == newItem.userid && oldItem.flag == newItem.flag
+        return oldItem == newItem && oldItem.userId == newItem.userId && oldItem.flag == newItem.flag
     }
 }

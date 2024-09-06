@@ -21,7 +21,7 @@ class SplashFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var timer: Timer? = null
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSplashBinding.inflate(inflater, container, false)
         return binding.root
     }

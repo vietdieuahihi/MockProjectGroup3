@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AppChatClient</string>
+    <string name="app_name">ChatAppClient</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_home">Home</string>
@@ -17,4 +17,5 @@
     <string name="cancel">Cancel</string>
     <string name="unknown_user">Unknown user</string>
     <string name="title_confirm">Confirm</string>
+    <string name="deleted_the_message">The message is deleted</string>
 </resources>

@@ -21,7 +21,7 @@
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.client.ui.SplashFragment"
-        android:label="fragment_splasg"
+        android:label="fragment_splash"
         tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_listConversationFragment"

@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "Service disconnected: $name")
         }
     }
-    
+
     companion object {
         const val TAG = "MainActivity"
     }

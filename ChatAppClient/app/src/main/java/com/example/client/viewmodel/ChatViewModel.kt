@@ -37,4 +37,12 @@ class ChatViewModel @Inject constructor(
             repository.sendMessage(chat)
         }
     }
+
+    fun hideChat(chatId: Long) {
+        viewModelScope.launch {
+            repository.hideChat(chatId)
+        }
+    }
+
+    fun getChat(chatId: Long) = repository.getChatById(chatId)
 }

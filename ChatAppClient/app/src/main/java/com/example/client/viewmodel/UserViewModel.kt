@@ -20,14 +20,10 @@ class UserViewModel @Inject constructor(
     val users: LiveData<List<User>> = repository.users
     val currentUser: LiveData<User> get() = repository.currentUser
 
-    var currentUserV2: User? = null
-
     init {
         users.observeForever { userList ->
             // Set default user to the one with id = 1 if available
-            repository.getUserById(
-                userList.find { it.userid == 1 }?.userid ?: userList.firstOrNull()?.userid ?: 1
-            )
+            repository.getUserById(userList.find { it.userId == 1 }?.userId ?: userList.firstOrNull()?.userId ?: 1)
         }
     }
 
@@ -36,7 +32,6 @@ class UserViewModel @Inject constructor(
     }
 
     fun getUserById(userId: Int): LiveData<User> {
-        // Sử dụng repository để lấy User và trả về LiveData<User>
         repository.getUserById(userId)
         return repository.userById
     }
@@ -54,6 +49,6 @@ class UserViewModel @Inject constructor(
 
     fun switchUser(user: User) {
         Log.d("VietDQ15", "switchUser is call $user")
-        repository.switchUser(user.userid)
+        repository.switchUser(user.userId)
     }
 }

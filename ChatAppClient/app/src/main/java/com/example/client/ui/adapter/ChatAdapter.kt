@@ -2,6 +2,7 @@ package com.example.client.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ class ChatAdapter(
     private val selfId: Int,
     private val yourId: Int,
     private val userViewModel: UserViewModel,
+    private val onLongClickItemListener: ((Chat) -> Unit)? = null
 ) : ListAdapter<Chat, RecyclerView.ViewHolder>(ChatDiffCallback()) {
 
     inner class ChatViewHolder(private val binding: ItemSentMessageBinding) :
@@ -25,6 +27,15 @@ class ChatAdapter(
         fun bind(chat: Chat) {
             binding.textMessage.text = chat.message
             binding.textTimestamp.text = chat.timestamp.toLong().toTimeV2()
+
+            binding.textMessage.setOnLongClickListener {
+                onLongClickItemListener?.invoke(chat)
+                false
+            }
+
+            binding.textMessage.updateLayoutParams {
+                width = 0
+            }
         }
     }
 
@@ -33,8 +44,7 @@ class ChatAdapter(
 
         fun bind(chat: Chat) {
             userViewModel.fetchUserById(yourId).let { user ->
-                Glide.with(binding.imgConversation).load(user?.avatar ?: "")
-                    .placeholder(R.drawable.baseline_person_24)
+                Glide.with(binding.imgConversation).load(user?.avatar ?: "").placeholder(R.drawable.baseline_person_24)
                     .into(binding.imgConversation)
             }
             binding.textMessage.text = chat.message

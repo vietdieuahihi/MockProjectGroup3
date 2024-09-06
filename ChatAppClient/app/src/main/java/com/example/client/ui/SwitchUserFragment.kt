@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -22,7 +21,7 @@ class SwitchUserFragment : Fragment() {
     private val binding get() = _binding!!
     private val userViewModel: UserViewModel by viewModels()
 
-    private val userAdapter = UserAdapter() {
+    private val userAdapter = UserAdapter {
         userViewModel.switchUser(it)
         findNavController().popBackStack()
     }
@@ -32,7 +31,7 @@ class SwitchUserFragment : Fragment() {
         userViewModel.initService((requireActivity() as MainActivity).messageService)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSwitchUserBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -45,6 +44,9 @@ class SwitchUserFragment : Fragment() {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
             adapter = userAdapter
+        }
+        binding.icBack.setOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
