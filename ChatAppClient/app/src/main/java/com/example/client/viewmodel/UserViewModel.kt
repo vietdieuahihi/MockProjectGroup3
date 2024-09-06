@@ -1,9 +1,8 @@
 package com.example.client.viewmodel
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.example.client.data.repository.AppRepository
 import com.example.server.IMessageService
 import com.example.server.entity.User
@@ -12,18 +11,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    application: Application
-) : AndroidViewModel(application) {
-
-    private val repository: AppRepository = AppRepository(application.applicationContext)
+    private val repository: AppRepository
+) : ViewModel() {
 
     val users: LiveData<List<User>> = repository.users
     val currentUser: LiveData<User> get() = repository.currentUser
 
     init {
         users.observeForever { userList ->
-            // Set default user to the one with id = 1 if available
-            repository.getUserById(userList.find { it.userId == 1 }?.userId ?: userList.firstOrNull()?.userId ?: 1)
+            repository.getUserById(
+                userList.find { it.userId == 1 }?.userId ?: userList.firstOrNull()?.userId ?: 1
+            )
         }
     }
 
@@ -48,7 +46,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun switchUser(user: User) {
-        Log.d("VietDQ15", "switchUser is call $user")
+        Log.d("UserViewModel", "switchUser is called for $user")
         repository.switchUser(user.userId)
     }
 }

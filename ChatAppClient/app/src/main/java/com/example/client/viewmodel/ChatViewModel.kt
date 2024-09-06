@@ -1,7 +1,6 @@
 package com.example.client.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
@@ -14,10 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    application: Application
-) : AndroidViewModel(application) {
-
-    private val repository: AppRepository = AppRepository(application.applicationContext)
+    private val repository: AppRepository
+) : ViewModel() {
 
     private val _chatInConversation = MediatorLiveData<List<Chat>>()
     val chatInConversation: LiveData<List<Chat>> get() = _chatInConversation

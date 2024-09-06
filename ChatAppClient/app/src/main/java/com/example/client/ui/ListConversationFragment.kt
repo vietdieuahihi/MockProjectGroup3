@@ -57,8 +57,8 @@ class ListConversationFragment : Fragment() {
         // Load default user
         loadCurrentUser()
 
-        // Set click listener to open drawer when avatar is clicked
-        avatarButton.setOnClickListener {
+        // Set click listener to open drawer when icon menu is clicked
+        binding.icMenu.setOnClickListener {
             drawerLayout.openDrawer(binding.leftMenu)
         }
 

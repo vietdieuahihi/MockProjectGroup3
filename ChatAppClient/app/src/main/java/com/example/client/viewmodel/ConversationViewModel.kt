@@ -1,8 +1,7 @@
 package com.example.client.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.example.client.data.repository.AppRepository
 import com.example.server.IMessageService
 import com.example.server.entity.Conversation
@@ -11,23 +10,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConversationViewModel @Inject constructor(
-    application: Application
-) : AndroidViewModel(application) {
-
-    private val repository: AppRepository = AppRepository(application.applicationContext)
+    private val repository: AppRepository
+) : ViewModel() {
 
     fun initService(messageService: IMessageService) {
         repository.initService(messageService)
     }
 
     fun fetchConversationsForUser(userId: Int): LiveData<List<Conversation>> {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            repository.fetchConversationsForUser(userId)
-//            withContext(Dispatchers.Main) {
-//                // _conversations.value = fetchedConversations
-//            }
-//        }
-
         repository.fetchConversationsForUser(userId)
         return repository.conversations
     }

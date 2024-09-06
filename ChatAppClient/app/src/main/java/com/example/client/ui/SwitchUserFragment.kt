@@ -42,6 +42,7 @@ class SwitchUserFragment : Fragment() {
         userViewModel.getUsers()
         binding.userList.apply {
             setHasFixedSize(true)
+            itemAnimator = null
             layoutManager = LinearLayoutManager(requireContext())
             adapter = userAdapter
         }

@@ -22,7 +22,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="@dimen/define_dimen_40"
                 android:layout_height="@dimen/define_dimen_40"
-                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/define_dimen_16"
                 app:cardBackgroundColor="@android:color/transparent"
@@ -51,15 +51,15 @@
                 tools:ignore="RelativeOverlap" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imgSearch"
+                android:id="@+id/icMenu"
                 android:layout_width="@dimen/define_dimen_40"
                 android:layout_height="@dimen/define_dimen_40"
-                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/define_dimen_16"
                 android:clickable="true"
                 android:focusable="true"
-                android:src="@drawable/ic_search" />
+                android:src="@drawable/ic_menu" />
         </RelativeLayout>
 
         <TextView
@@ -78,6 +78,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/white_rectangle"
             android:clipToPadding="false"
+            tools:listitem="@layout/item_conversation"
             android:paddingHorizontal="@dimen/define_dimen_10"
             android:paddingVertical="@dimen/define_dimen_30" />
     </LinearLayout>
@@ -138,15 +139,5 @@
                 app:srcCompat="@drawable/baseline_check_24" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-        <!--        <Spinner-->
-        <!--            android:id="@+id/spUserList"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:background="@android:color/transparent"-->
-        <!--            android:padding="8dp"-->
-        <!--            android:popupBackground="@android:color/white"-->
-        <!--            android:spinnerMode="dropdown" />-->
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
